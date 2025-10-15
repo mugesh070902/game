@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<head>
+<title>ZOHO Memory Card Game</title>
+<style>
+body {
+  font-family: 'Segoe UI', sans-serif;
+  background: #f0f0f0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 30px;
+}
+
+h1 {
+  color: royalblue;
+  margin-bottom: 20px;
+}
+
+.row {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 15px;
+}
+
+
+.box {
+  width: 80px;
+  height: 80px;
+  background: gray;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 8px;
+  font-size: 24px;
+  cursor: pointer;
+  transition: transform 0.2s, background 0.3s;
+  user-select: none;
+  
+}
+
+
+.box .letter {
+  color: #fff;
+  animation: hideText 1s linear 10s forwards;
+}
+
+
+.correct:checked + label .letter {
+  color: darkred;
+}
+
+
+.wrong:checked + label .letter {
+  color: transparent;
+}
+
+
+.correct:checked + label {
+  animation: shake-vertical 0.4s ease;
+  background: #ff7e5f;
+}
+
+.wrong:checked + label {
+  animation: shake-horizontal 0.4s ease;
+  background: indianred;
+}
+
+
+@keyframes hideText {
+  to { color: transparent; }
+}
+
+
+@keyframes shake-vertical {
+  0%,100% { transform: translateY(0); }
+  25% { transform: translateY(-10px); }
+  50% { transform: translateY(10px); }
+  75% { transform: translateY(-10px); }
+}
+
+@keyframes shake-horizontal {
+  0%,100% { transform: translateX(0); }
+  25% { transform: translateX(-10px); }
+  50% { transform: translateX(10px); }
+  75% { transform: translateX(-10px); }
+}
+
+input[type="checkbox"] {
+  display: none;
+}
+</style>/
+</head>
+<body>
+
+<h1> ZOHO Memory Card Game</h1>
+<p> Remember the letters before they hide!</p>
+
+
+<div class="row">
+  <input type="checkbox" id="r1c1" class="wrong">
+  <label for="r1c1" class="box"><span class="letter">A</span></label>
+
+  <input type="checkbox" id="r1c2" class="correct">
+  <label for="r1c2" class="box"><span class="letter">Z</span></label>
+
+  <input type="checkbox" id="r1c3" class="wrong">
+  <label for="r1c3" class="box"><span class="letter">B</span></label>
+
+  <input type="checkbox" id="r1c4" class="wrong">
+  <label for="r1c4" class="box"><span class="letter">C</span></label>
+</div>
+
+
+<div class="row">
+  <input type="checkbox" id="r2c1" class="wrong">
+  <label for="r2c1" class="box"><span class="letter">D</span></label>
+
+  <input type="checkbox" id="r2c2" class="wrong">
+  <label for="r2c2" class="box"><span class="letter">E</span></label>
+
+  <input type="checkbox" id="r2c3" class="correct">
+  <label for="r2c3" class="box"><span class="letter">O</span></label>
+
+  <input type="checkbox" id="r2c4" class="wrong">
+  <label for="r2c4" class="box"><span class="letter">F</span></label>
+</div>
+
+
+<div class="row">
+  <input type="checkbox" id="r3c1" class="wrong">
+  <label for="r3c1" class="box"><span class="letter">G</span></label>
+
+  <input type="checkbox" id="r3c2" class="wrong">
+  <label for="r3c2" class="box"><span class="letter">I</span></label>
+
+  <input type="checkbox" id="r3c3" class="wrong">
+  <label for="r3c3" class="box"><span class="letter">J</span></label>
+
+  <input type="checkbox" id="r3c4" class="correct">
+  <label for="r3c4" class="box"><span class="letter">H</span></label>
+</div>
+
+
+<div class="row">
+  <input type="checkbox" id="r4c1" class="correct">
+  <label for="r4c1" class="box"><span class="letter">O</span></label>
+
+  <input type="checkbox" id="r4c2" class="wrong">
+  <label for="r4c2" class="box"><span class="letter">K</span></label>
+
+  <input type="checkbox" id="r4c3" class="wrong">
+  <label for="r4c3" class="box"><span class="letter">L</span></label>
+
+  <input type="checkbox" id="r4c4" class="wrong">
+  <label for="r4c4" class="box"><span class="letter">M</span></label>
+</div>
+
+</body>
+</html>
+
