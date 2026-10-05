@@ -257,6 +257,34 @@
         result.style.display = "block";
     }
 
+    async function sendScore(score) {
+
+    const API_URL =
+        "https://demo-60084120945.development.catalystserverless.in/server/helloWorld/execute";
+
+    try {
+        const response = await fetch(
+            API_URL + "?score=" + encodeURIComponent(score),
+            {
+                method: "POST"
+            }
+        );
+
+        if (!response.ok) {
+            throw new Error("HTTP " + response.status);
+        }
+
+        const data = await response.json();
+
+        console.log("Backend response:", data);
+
+    } catch (error) {
+
+        console.error("Backend error:", error);
+
+    }
+}
+
 
 </script>
 
