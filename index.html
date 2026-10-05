@@ -1,254 +1,262 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<title>ZOHO Memory Card Game</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<style>
-body {
-  font-family: 'Segoe UI', sans-serif;
-  background: #f0f0f0;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 30px;
-}
+    <title>Catalyst Frontend Demo</title>
 
-h1 {
-  color: royalblue;
-  margin-bottom: 10px;
-}
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
 
-.info {
-  display: flex;
-  gap: 30px;
-  font-size: 18px;
-  font-weight: bold;
-  margin-bottom: 20px;
-}
+        body {
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #eef2ff, #f8fafc);
+        }
 
-#message {
-  font-size: 20px;
-  font-weight: bold;
-  margin: 15px;
-}
+        .container {
+            width: 420px;
+            padding: 30px;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
+        }
 
-.row {
-  display: flex;
-  gap: 15px;
-  margin-bottom: 15px;
-}
+        h1 {
+            text-align: center;
+            margin-bottom: 10px;
+            color: #1e293b;
+        }
 
-.box {
-  width: 80px;
-  height: 80px;
-  background: gray;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  border-radius: 8px;
-  font-size: 24px;
-  cursor: pointer;
-  user-select: none;
-  transition: transform 0.2s, background 0.3s;
-}
+        .subtitle {
+            text-align: center;
+            color: #64748b;
+            margin-bottom: 25px;
+        }
 
-.box:hover {
-  transform: scale(1.05);
-}
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #334155;
+        }
 
-.letter {
-  color: white;
-}
+        input {
+            width: 100%;
+            padding: 13px;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            font-size: 16px;
+            outline: none;
+        }
 
-/* Hide letters after 10 seconds */
-.hide .letter {
-  color: transparent;
-}
+        input:focus {
+            border-color: #6366f1;
+        }
 
-/* Correct selection */
-.correct {
-  background: green;
-}
+        button {
+            width: 100%;
+            margin-top: 18px;
+            padding: 13px;
+            border: none;
+            border-radius: 8px;
+            background: #4f46e5;
+            color: white;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+        }
 
-/* Wrong selection */
-.wrong {
-  background: indianred;
-}
+        button:hover {
+            background: #4338ca;
+        }
 
-button {
-  margin-top: 20px;
-  padding: 10px 25px;
-  border: none;
-  border-radius: 6px;
-  background: royalblue;
-  color: white;
-  font-size: 16px;
-  cursor: pointer;
-}
+        button:disabled {
+            background: #94a3b8;
+            cursor: not-allowed;
+        }
 
-button:hover {
-  background: darkblue;
-}
-</style>
+        .result {
+            margin-top: 25px;
+            padding: 15px;
+            border-radius: 8px;
+            background: #f1f5f9;
+            color: #334155;
+            min-height: 50px;
+            display: none;
+        }
+
+        .result.success {
+            display: block;
+            border-left: 4px solid #22c55e;
+        }
+
+        .result.error {
+            display: block;
+            border-left: 4px solid #ef4444;
+            color: #b91c1c;
+        }
+
+        .status {
+            margin-top: 15px;
+            text-align: center;
+            font-size: 14px;
+            color: #64748b;
+        }
+    </style>
 </head>
 
 <body>
 
-<h1>ZOHO Memory Card Game</h1>
+<div class="container">
 
-<p>Remember the letters before they hide!</p>
+    <h1>🚀 Catalyst Demo</h1>
 
-<div class="info">
-  <div>Score: <span id="score">0</span></div>
-  <div>Attempts: <span id="attempts">0</span></div>
-</div>
+    <p class="subtitle">
+        Frontend → Java Serverless Backend
+    </p>
 
-<div id="message"></div>
+    <label for="name">Enter your name</label>
 
-<div id="game">
+    <input
+        type="text"
+        id="name"
+        placeholder="e.g. Mugesh"
+    >
 
-  <div class="row">
-    <div class="box" data-letter="A"><span class="letter">A</span></div>
-    <div class="box" data-letter="Z"><span class="letter">Z</span></div>
-    <div class="box" data-letter="B"><span class="letter">B</span></div>
-    <div class="box" data-letter="C"><span class="letter">C</span></div>
-  </div>
+    <button id="callBackendBtn">
+        Call Java Backend
+    </button>
 
-  <div class="row">
-    <div class="box" data-letter="D"><span class="letter">D</span></div>
-    <div class="box" data-letter="E"><span class="letter">E</span></div>
-    <div class="box" data-letter="O"><span class="letter">O</span></div>
-    <div class="box" data-letter="F"><span class="letter">F</span></div>
-  </div>
+    <div id="result" class="result"></div>
 
-  <div class="row">
-    <div class="box" data-letter="G"><span class="letter">G</span></div>
-    <div class="box" data-letter="I"><span class="letter">I</span></div>
-    <div class="box" data-letter="J"><span class="letter">J</span></div>
-    <div class="box" data-letter="H"><span class="letter">H</span></div>
-  </div>
-
-  <div class="row">
-    <div class="box" data-letter="O"><span class="letter">O</span></div>
-    <div class="box" data-letter="K"><span class="letter">K</span></div>
-    <div class="box" data-letter="L"><span class="letter">L</span></div>
-    <div class="box" data-letter="M"><span class="letter">M</span></div>
-  </div>
+    <div id="status" class="status"></div>
 
 </div>
 
-<button onclick="restartGame()">Restart Game</button>
 
 <script>
 
-const target = ["Z", "O", "H", "O"];
-
-let currentIndex = 0;
-let score = 0;
-let attempts = 0;
-
-const boxes = document.querySelectorAll(".box");
-const scoreDisplay = document.getElementById("score");
-const attemptsDisplay = document.getElementById("attempts");
-const message = document.getElementById("message");
-const game = document.getElementById("game");
-
-/* Hide letters after 10 seconds */
-setTimeout(() => {
-    game.classList.add("hide");
-    message.innerText = "Find Z → O → H → O!";
-}, 10000);
+    // Your deployed Catalyst Java function
+    const API_URL =
+        "https://demo-60084120945.development.catalystserverless.in/server/helloWorld/execute";
 
 
-/* Card click */
-boxes.forEach(box => {
+    const nameInput = document.getElementById("name");
+    const button = document.getElementById("callBackendBtn");
+    const result = document.getElementById("result");
+    const status = document.getElementById("status");
 
-    box.addEventListener("click", function() {
 
-        /* Prevent clicking after game completion */
-        if (currentIndex >= target.length) {
+    button.addEventListener("click", callBackend);
+
+
+    async function callBackend() {
+
+        const name = nameInput.value.trim();
+
+
+        // Validate input
+        if (!name) {
+
+            showError("Please enter your name.");
+
             return;
         }
 
-        attempts++;
-        attemptsDisplay.innerText = attempts;
 
-        const selectedLetter = this.dataset.letter;
-        const expectedLetter = target[currentIndex];
+        // Loading state
+        button.disabled = true;
+        button.textContent = "Calling Backend...";
+        status.textContent = "Connecting to Catalyst...";
 
-        if (selectedLetter === expectedLetter) {
+        result.style.display = "none";
 
-            /* Correct */
-            this.classList.add("correct");
 
-            score += 10;
-            scoreDisplay.innerText = score;
+        try {
 
-            currentIndex++;
+            const url =
+                API_URL +
+                "?name=" +
+                encodeURIComponent(name);
 
-            if (currentIndex === target.length) {
 
-                message.innerText = "🎉 Congratulations! You found ZOHO!";
-                message.style.color = "green";
+            const response = await fetch(url, {
 
-            } else {
+                method: "POST"
 
-                message.innerText =
-                    "Correct! Now find " + target[currentIndex];
+            });
 
+
+            // Check HTTP status
+            if (!response.ok) {
+
+                throw new Error(
+                    "Backend returned HTTP " + response.status
+                );
             }
 
-        } else {
 
-            /* Wrong */
-            this.classList.add("wrong");
+            // Convert response to JSON
+            const data = await response.json();
 
-            score -= 2;
 
-            if (score < 0) {
-                score = 0;
-            }
+            console.log("Backend response:", data);
 
-            scoreDisplay.innerText = score;
 
-            message.innerText =
-                "❌ Wrong! Find " + target[currentIndex];
+            // Display backend response
+            showSuccess(data.output);
 
-            /* Remove wrong color */
-            setTimeout(() => {
-                this.classList.remove("wrong");
-            }, 500);
+            status.textContent = "Backend connected successfully ✓";
+
+
+        } catch (error) {
+
+            console.error("Backend error:", error);
+
+            showError(
+                "Unable to connect to the backend. " +
+                error.message
+            );
+
+            status.textContent = "Backend connection failed";
+
+        } finally {
+
+            button.disabled = false;
+            button.textContent = "Call Java Backend";
+
         }
-
-    });
-
-});
+    }
 
 
-function restartGame() {
+    function showSuccess(message) {
 
-    currentIndex = 0;
-    score = 0;
-    attempts = 0;
+        result.className = "result success";
 
-    scoreDisplay.innerText = "0";
-    attemptsDisplay.innerText = "0";
+        result.textContent = message;
 
-    message.innerText = "Remember the letters!";
+        result.style.display = "block";
+    }
 
-    boxes.forEach(box => {
-        box.classList.remove("correct");
-        box.classList.remove("wrong");
-    });
 
-    game.classList.remove("hide");
+    function showError(message) {
 
-    /* Hide again after 10 seconds */
-    setTimeout(() => {
-        game.classList.add("hide");
-        message.innerText = "Find Z → O → H → O!";
-    }, 10000);
-}
+        result.className = "result error";
+
+        result.textContent = message;
+
+        result.style.display = "block";
+    }
+
 
 </script>
 
