@@ -1,6 +1,8 @@
 <!DOCTYPE html>
+<html>
 <head>
 <title>ZOHO Memory Card Game</title>
+
 <style>
 body {
   font-family: 'Segoe UI', sans-serif;
@@ -13,7 +15,21 @@ body {
 
 h1 {
   color: royalblue;
+  margin-bottom: 10px;
+}
+
+.info {
+  display: flex;
+  gap: 30px;
+  font-size: 18px;
+  font-weight: bold;
   margin-bottom: 20px;
+}
+
+#message {
+  font-size: 20px;
+  font-weight: bold;
+  margin: 15px;
 }
 
 .row {
@@ -21,7 +37,6 @@ h1 {
   gap: 15px;
   margin-bottom: 15px;
 }
-
 
 .box {
   width: 80px;
@@ -33,128 +48,209 @@ h1 {
   border-radius: 8px;
   font-size: 24px;
   cursor: pointer;
-  transition: transform 0.2s, background 0.3s;
   user-select: none;
-  
+  transition: transform 0.2s, background 0.3s;
 }
 
-
-.box .letter {
-  color: #fff;
-  animation: hideText 1s linear 10s forwards;
+.box:hover {
+  transform: scale(1.05);
 }
 
-
-.correct:checked + label .letter {
-  color: darkred;
+.letter {
+  color: white;
 }
 
-
-.wrong:checked + label .letter {
+/* Hide letters after 10 seconds */
+.hide .letter {
   color: transparent;
 }
 
-
-.correct:checked + label {
-  animation: shake-vertical 0.4s ease;
-  background: #ff7e5f;
+/* Correct selection */
+.correct {
+  background: green;
 }
 
-.wrong:checked + label {
-  animation: shake-horizontal 0.4s ease;
+/* Wrong selection */
+.wrong {
   background: indianred;
 }
 
-
-@keyframes hideText {
-  to { color: transparent; }
+button {
+  margin-top: 20px;
+  padding: 10px 25px;
+  border: none;
+  border-radius: 6px;
+  background: royalblue;
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
 }
 
-
-@keyframes shake-vertical {
-  0%,100% { transform: translateY(0); }
-  25% { transform: translateY(-10px); }
-  50% { transform: translateY(10px); }
-  75% { transform: translateY(-10px); }
+button:hover {
+  background: darkblue;
 }
-
-@keyframes shake-horizontal {
-  0%,100% { transform: translateX(0); }
-  25% { transform: translateX(-10px); }
-  50% { transform: translateX(10px); }
-  75% { transform: translateX(-10px); }
-}
-
-input[type="checkbox"] {
-  display: none;
-}
-</style>/
+</style>
 </head>
+
 <body>
 
-<h1> ZOHO Memory Card Game</h1>
-<p> Remember the letters before they hide!</p>
+<h1>ZOHO Memory Card Game</h1>
 
+<p>Remember the letters before they hide!</p>
 
-<div class="row">
-  <input type="checkbox" id="r1c1" class="wrong">
-  <label for="r1c1" class="box"><span class="letter">A</span></label>
-
-  <input type="checkbox" id="r1c2" class="correct">
-  <label for="r1c2" class="box"><span class="letter">Z</span></label>
-
-  <input type="checkbox" id="r1c3" class="wrong">
-  <label for="r1c3" class="box"><span class="letter">B</span></label>
-
-  <input type="checkbox" id="r1c4" class="wrong">
-  <label for="r1c4" class="box"><span class="letter">C</span></label>
+<div class="info">
+  <div>Score: <span id="score">0</span></div>
+  <div>Attempts: <span id="attempts">0</span></div>
 </div>
 
+<div id="message"></div>
 
-<div class="row">
-  <input type="checkbox" id="r2c1" class="wrong">
-  <label for="r2c1" class="box"><span class="letter">D</span></label>
+<div id="game">
 
-  <input type="checkbox" id="r2c2" class="wrong">
-  <label for="r2c2" class="box"><span class="letter">E</span></label>
+  <div class="row">
+    <div class="box" data-letter="A"><span class="letter">A</span></div>
+    <div class="box" data-letter="Z"><span class="letter">Z</span></div>
+    <div class="box" data-letter="B"><span class="letter">B</span></div>
+    <div class="box" data-letter="C"><span class="letter">C</span></div>
+  </div>
 
-  <input type="checkbox" id="r2c3" class="correct">
-  <label for="r2c3" class="box"><span class="letter">O</span></label>
+  <div class="row">
+    <div class="box" data-letter="D"><span class="letter">D</span></div>
+    <div class="box" data-letter="E"><span class="letter">E</span></div>
+    <div class="box" data-letter="O"><span class="letter">O</span></div>
+    <div class="box" data-letter="F"><span class="letter">F</span></div>
+  </div>
 
-  <input type="checkbox" id="r2c4" class="wrong">
-  <label for="r2c4" class="box"><span class="letter">F</span></label>
+  <div class="row">
+    <div class="box" data-letter="G"><span class="letter">G</span></div>
+    <div class="box" data-letter="I"><span class="letter">I</span></div>
+    <div class="box" data-letter="J"><span class="letter">J</span></div>
+    <div class="box" data-letter="H"><span class="letter">H</span></div>
+  </div>
+
+  <div class="row">
+    <div class="box" data-letter="O"><span class="letter">O</span></div>
+    <div class="box" data-letter="K"><span class="letter">K</span></div>
+    <div class="box" data-letter="L"><span class="letter">L</span></div>
+    <div class="box" data-letter="M"><span class="letter">M</span></div>
+  </div>
+
 </div>
 
+<button onclick="restartGame()">Restart Game</button>
 
-<div class="row">
-  <input type="checkbox" id="r3c1" class="wrong">
-  <label for="r3c1" class="box"><span class="letter">G</span></label>
+<script>
 
-  <input type="checkbox" id="r3c2" class="wrong">
-  <label for="r3c2" class="box"><span class="letter">I</span></label>
+const target = ["Z", "O", "H", "O"];
 
-  <input type="checkbox" id="r3c3" class="wrong">
-  <label for="r3c3" class="box"><span class="letter">J</span></label>
+let currentIndex = 0;
+let score = 0;
+let attempts = 0;
 
-  <input type="checkbox" id="r3c4" class="correct">
-  <label for="r3c4" class="box"><span class="letter">H</span></label>
-</div>
+const boxes = document.querySelectorAll(".box");
+const scoreDisplay = document.getElementById("score");
+const attemptsDisplay = document.getElementById("attempts");
+const message = document.getElementById("message");
+const game = document.getElementById("game");
+
+/* Hide letters after 10 seconds */
+setTimeout(() => {
+    game.classList.add("hide");
+    message.innerText = "Find Z → O → H → O!";
+}, 10000);
 
 
-<div class="row">
-  <input type="checkbox" id="r4c1" class="correct">
-  <label for="r4c1" class="box"><span class="letter">O</span></label>
+/* Card click */
+boxes.forEach(box => {
 
-  <input type="checkbox" id="r4c2" class="wrong">
-  <label for="r4c2" class="box"><span class="letter">K</span></label>
+    box.addEventListener("click", function() {
 
-  <input type="checkbox" id="r4c3" class="wrong">
-  <label for="r4c3" class="box"><span class="letter">L</span></label>
+        /* Prevent clicking after game completion */
+        if (currentIndex >= target.length) {
+            return;
+        }
 
-  <input type="checkbox" id="r4c4" class="wrong">
-  <label for="r4c4" class="box"><span class="letter">M</span></label>
-</div>
+        attempts++;
+        attemptsDisplay.innerText = attempts;
+
+        const selectedLetter = this.dataset.letter;
+        const expectedLetter = target[currentIndex];
+
+        if (selectedLetter === expectedLetter) {
+
+            /* Correct */
+            this.classList.add("correct");
+
+            score += 10;
+            scoreDisplay.innerText = score;
+
+            currentIndex++;
+
+            if (currentIndex === target.length) {
+
+                message.innerText = "🎉 Congratulations! You found ZOHO!";
+                message.style.color = "green";
+
+            } else {
+
+                message.innerText =
+                    "Correct! Now find " + target[currentIndex];
+
+            }
+
+        } else {
+
+            /* Wrong */
+            this.classList.add("wrong");
+
+            score -= 2;
+
+            if (score < 0) {
+                score = 0;
+            }
+
+            scoreDisplay.innerText = score;
+
+            message.innerText =
+                "❌ Wrong! Find " + target[currentIndex];
+
+            /* Remove wrong color */
+            setTimeout(() => {
+                this.classList.remove("wrong");
+            }, 500);
+        }
+
+    });
+
+});
+
+
+function restartGame() {
+
+    currentIndex = 0;
+    score = 0;
+    attempts = 0;
+
+    scoreDisplay.innerText = "0";
+    attemptsDisplay.innerText = "0";
+
+    message.innerText = "Remember the letters!";
+
+    boxes.forEach(box => {
+        box.classList.remove("correct");
+        box.classList.remove("wrong");
+    });
+
+    game.classList.remove("hide");
+
+    /* Hide again after 10 seconds */
+    setTimeout(() => {
+        game.classList.add("hide");
+        message.innerText = "Find Z → O → H → O!";
+    }, 10000);
+}
+
+</script>
 
 </body>
 </html>
-
