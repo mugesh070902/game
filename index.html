@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Catalyst Frontend Demo</title>
+    <title>Memory Puzzle</title>
 
     <style>
         * {
@@ -22,92 +22,109 @@
             background: linear-gradient(135deg, #eef2ff, #f8fafc);
         }
 
-        .container {
+        .game {
             width: 420px;
             padding: 30px;
             background: white;
-            border-radius: 16px;
-            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
+            border-radius: 18px;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.1);
+            text-align: center;
         }
 
         h1 {
-            text-align: center;
-            margin-bottom: 10px;
             color: #1e293b;
-        }
-
-        .subtitle {
-            text-align: center;
-            color: #64748b;
-            margin-bottom: 25px;
-        }
-
-        label {
-            display: block;
             margin-bottom: 8px;
-            font-weight: 600;
+        }
+
+        .instruction {
+            color: #64748b;
+            margin-bottom: 15px;
+        }
+
+        .target {
+            font-size: 18px;
+            font-weight: bold;
+            color: #4f46e5;
+            margin-bottom: 15px;
+        }
+
+        .score {
+            margin-bottom: 20px;
+            font-size: 16px;
+            font-weight: bold;
             color: #334155;
         }
 
-        input {
-            width: 100%;
-            padding: 13px;
-            border: 1px solid #cbd5e1;
-            border-radius: 8px;
-            font-size: 16px;
-            outline: none;
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
         }
 
-        input:focus {
-            border-color: #6366f1;
+        .cell {
+            height: 70px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            border-radius: 10px;
+            background: #4f46e5;
+            color: white;
+
+            font-size: 24px;
+            font-weight: bold;
+
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .cell:hover {
+            background: #4338ca;
+        }
+
+        .cell.correct {
+            background: #22c55e;
+        }
+
+        .cell.wrong {
+            background: #ef4444;
         }
 
         button {
             width: 100%;
-            margin-top: 18px;
-            padding: 13px;
+            margin-top: 20px;
+            padding: 12px;
+
             border: none;
             border-radius: 8px;
-            background: #4f46e5;
+
+            background: #0f172a;
             color: white;
+
             font-size: 16px;
-            font-weight: 600;
             cursor: pointer;
         }
 
         button:hover {
-            background: #4338ca;
+            background: #1e293b;
         }
 
-        button:disabled {
-            background: #94a3b8;
-            cursor: not-allowed;
-        }
-
-        .result {
-            margin-top: 25px;
-            padding: 15px;
-            border-radius: 8px;
-            background: #f1f5f9;
-            color: #334155;
-            min-height: 50px;
-            display: none;
-        }
-
-        .result.success {
-            display: block;
-            border-left: 4px solid #22c55e;
-        }
-
-        .result.error {
-            display: block;
-            border-left: 4px solid #ef4444;
-            color: #b91c1c;
-        }
-
-        .status {
+        #message {
             margin-top: 15px;
-            text-align: center;
+            min-height: 24px;
+            font-weight: bold;
+        }
+
+        .success {
+            color: #16a34a;
+        }
+
+        .error {
+            color: #dc2626;
+        }
+
+        .backend {
+            margin-top: 12px;
             font-size: 14px;
             color: #64748b;
         }
@@ -116,175 +133,257 @@
 
 <body>
 
-<div class="container">
+<div class="game">
 
-    <h1>🚀 Catalyst Demo</h1>
+    <h1>🧠 Memory Puzzle</h1>
 
-    <p class="subtitle">
-        Frontend → Java Serverless Backend
+    <p class="instruction">
+        Click the letters in the correct order
     </p>
 
-    <label for="name">Enter your name</label>
+    <div class="target">
+        Target: Z → O → H → O
+    </div>
 
-    <input
-        type="text"
-        id="name"
-        placeholder="e.g. Mugesh"
-    >
+    <div class="score">
+        Score: <span id="score">0</span>
+    </div>
 
-    <button id="callBackendBtn">
-        Call Java Backend
+    <div class="grid" id="grid">
+
+        <div class="cell">A</div>
+        <div class="cell">Z</div>
+        <div class="cell">B</div>
+        <div class="cell">C</div>
+
+        <div class="cell">D</div>
+        <div class="cell">E</div>
+        <div class="cell">O</div>
+        <div class="cell">F</div>
+
+        <div class="cell">G</div>
+        <div class="cell">I</div>
+        <div class="cell">J</div>
+        <div class="cell">H</div>
+
+        <div class="cell">O</div>
+        <div class="cell">K</div>
+        <div class="cell">L</div>
+        <div class="cell">M</div>
+
+    </div>
+
+    <div id="message"></div>
+
+    <div class="backend" id="backendStatus">
+        Backend: Waiting
+    </div>
+
+    <button onclick="restartGame()">
+        Restart Game
     </button>
-
-    <div id="result" class="result"></div>
-
-    <div id="status" class="status"></div>
 
 </div>
 
 
 <script>
 
-    // Your deployed Catalyst Java function
+    // ==========================================
+    // CATALYST JAVA BACKEND
+    // ==========================================
+
     const API_URL =
         "https://demo-60084120945.development.catalystserverless.in/server/helloWorld/execute";
 
 
-    const nameInput = document.getElementById("name");
-    const button = document.getElementById("callBackendBtn");
-    const result = document.getElementById("result");
-    const status = document.getElementById("status");
+    // ==========================================
+    // GAME VARIABLES
+    // ==========================================
+
+    const targetSequence = ["Z", "O", "H", "O"];
+
+    let currentStep = 0;
+
+    let score = 0;
+
+    let gameFinished = false;
 
 
-    button.addEventListener("click", callBackend);
+    const cells = document.querySelectorAll(".cell");
+
+    const scoreDisplay =
+        document.getElementById("score");
+
+    const message =
+        document.getElementById("message");
+
+    const backendStatus =
+        document.getElementById("backendStatus");
 
 
-    async function callBackend() {
+    // ==========================================
+    // CELL CLICK
+    // ==========================================
 
-        const name = nameInput.value.trim();
+    cells.forEach(cell => {
+
+        cell.addEventListener("click", function () {
+
+            if (gameFinished) {
+                return;
+            }
+
+            const letter = cell.textContent;
 
 
-        // Validate input
-        if (!name) {
+            // Correct answer
+            if (letter === targetSequence[currentStep]) {
 
-            showError("Please enter your name.");
+                cell.classList.add("correct");
 
-            return;
-        }
+                currentStep++;
+
+                score += 10;
+
+                scoreDisplay.textContent = score;
 
 
-        // Loading state
-        button.disabled = true;
-        button.textContent = "Calling Backend...";
-        status.textContent = "Connecting to Catalyst...";
+                // Player completed puzzle
+                if (currentStep === targetSequence.length) {
 
-        result.style.display = "none";
+                    gameFinished = true;
+
+                    message.textContent =
+                        "🎉 You Win!";
+
+                    message.className = "success";
+
+
+                    // SEND SCORE TO JAVA
+                    sendScore(score);
+                }
+
+            }
+
+            // Wrong answer
+            else {
+
+                cell.classList.add("wrong");
+
+                score -= 2;
+
+                if (score < 0) {
+                    score = 0;
+                }
+
+                scoreDisplay.textContent = score;
+
+                message.textContent =
+                    "❌ Wrong letter! Try again.";
+
+                message.className = "error";
+
+
+                setTimeout(() => {
+                    cell.classList.remove("wrong");
+                }, 500);
+            }
+
+        });
+
+    });
+
+
+    // ==========================================
+    // SEND SCORE TO JAVA BACKEND
+    // ==========================================
+
+    async function sendScore(score) {
+
+        backendStatus.textContent =
+            "Backend: Sending score...";
 
 
         try {
 
             const url =
                 API_URL +
-                "?name=" +
-                encodeURIComponent(name);
+                "?score=" +
+                encodeURIComponent(score);
 
 
             const response = await fetch(url, {
-
                 method: "POST"
-
             });
 
 
-            // Check HTTP status
             if (!response.ok) {
 
                 throw new Error(
-                    "Backend returned HTTP " + response.status
+                    "HTTP " + response.status
                 );
             }
 
 
-            // Convert response to JSON
-            const data = await response.json();
+            const data =
+                await response.json();
 
 
-            console.log("Backend response:", data);
+            console.log(
+                "Java Backend Response:",
+                data
+            );
 
 
-            // Display backend response
-            showSuccess(data.output);
-
-            status.textContent = "Backend connected successfully ✓";
+            backendStatus.textContent =
+                "Backend: Score saved ✓";
 
 
         } catch (error) {
 
-            console.error("Backend error:", error);
-
-            showError(
-                "Unable to connect to the backend. " +
-                error.message
+            console.error(
+                "Backend Error:",
+                error
             );
 
-            status.textContent = "Backend connection failed";
 
-        } finally {
-
-            button.disabled = false;
-            button.textContent = "Call Java Backend";
+            backendStatus.textContent =
+                "Backend: Connection failed";
 
         }
-    }
-
-
-    function showSuccess(message) {
-
-        result.className = "result success";
-
-        result.textContent = message;
-
-        result.style.display = "block";
-    }
-
-
-    function showError(message) {
-
-        result.className = "result error";
-
-        result.textContent = message;
-
-        result.style.display = "block";
-    }
-
-    async function sendScore(score) {
-
-    const API_URL =
-        "https://demo-60084120945.development.catalystserverless.in/server/helloWorld/execute";
-
-    try {
-        const response = await fetch(
-            API_URL + "?score=" + encodeURIComponent(score),
-            {
-                method: "POST"
-            }
-        );
-
-        if (!response.ok) {
-            throw new Error("HTTP " + response.status);
-        }
-
-        const data = await response.json();
-
-        console.log("Backend response:", data);
-
-    } catch (error) {
-
-        console.error("Backend error:", error);
 
     }
-}
 
+
+    // ==========================================
+    // RESTART GAME
+    // ==========================================
+
+    function restartGame() {
+
+        currentStep = 0;
+
+        score = 0;
+
+        gameFinished = false;
+
+
+        scoreDisplay.textContent = "0";
+
+        message.textContent = "";
+
+        backendStatus.textContent =
+            "Backend: Waiting";
+
+
+        cells.forEach(cell => {
+
+            cell.classList.remove("correct");
+            cell.classList.remove("wrong");
+
+        });
+
+    }
 
 </script>
 
