@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,6 +8,7 @@
     <title>Memory Puzzle</title>
 
     <style>
+
         * {
             box-sizing: border-box;
             margin: 0;
@@ -18,16 +20,27 @@
             display: flex;
             justify-content: center;
             align-items: center;
+
             font-family: Arial, sans-serif;
-            background: linear-gradient(135deg, #eef2ff, #f8fafc);
+
+            background: linear-gradient(
+                135deg,
+                #eef2ff,
+                #f8fafc
+            );
         }
 
         .game {
             width: 420px;
             padding: 30px;
+
             background: white;
+
             border-radius: 18px;
-            box-shadow: 0 15px 40px rgba(0,0,0,0.1);
+
+            box-shadow:
+                0 15px 40px rgba(0, 0, 0, 0.10);
+
             text-align: center;
         }
 
@@ -41,41 +54,83 @@
             margin-bottom: 15px;
         }
 
+        /* Player Name */
+
+        #playerName {
+            width: 100%;
+
+            padding: 12px;
+
+            margin-bottom: 15px;
+
+            border: 1px solid #cbd5e1;
+
+            border-radius: 8px;
+
+            font-size: 16px;
+
+            outline: none;
+        }
+
+        #playerName:focus {
+            border-color: #4f46e5;
+        }
+
         .target {
             font-size: 18px;
+
             font-weight: bold;
+
             color: #4f46e5;
+
             margin-bottom: 15px;
         }
 
         .score {
             margin-bottom: 20px;
+
             font-size: 16px;
+
             font-weight: bold;
+
             color: #334155;
         }
 
+        /* Game Grid */
+
         .grid {
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
+
+            grid-template-columns:
+                repeat(4, 1fr);
+
             gap: 10px;
         }
 
         .cell {
             height: 70px;
+
             display: flex;
+
             justify-content: center;
+
             align-items: center;
 
             border-radius: 10px;
+
             background: #4f46e5;
+
             color: white;
 
             font-size: 24px;
+
             font-weight: bold;
 
             cursor: pointer;
+
             user-select: none;
+
+            transition: 0.2s;
         }
 
         .cell:hover {
@@ -84,24 +139,33 @@
 
         .cell.correct {
             background: #22c55e;
+
+            cursor: default;
         }
 
         .cell.wrong {
             background: #ef4444;
         }
 
+        /* Button */
+
         button {
             width: 100%;
+
             margin-top: 20px;
+
             padding: 12px;
 
             border: none;
+
             border-radius: 8px;
 
             background: #0f172a;
+
             color: white;
 
             font-size: 16px;
+
             cursor: pointer;
         }
 
@@ -109,9 +173,13 @@
             background: #1e293b;
         }
 
+        /* Messages */
+
         #message {
             margin-top: 15px;
+
             min-height: 24px;
+
             font-weight: bold;
         }
 
@@ -123,12 +191,18 @@
             color: #dc2626;
         }
 
+        /* Backend Status */
+
         .backend {
             margin-top: 12px;
+
             font-size: 14px;
+
             color: #64748b;
         }
+
     </style>
+
 </head>
 
 <body>
@@ -138,16 +212,33 @@
     <h1>🧠 Memory Puzzle</h1>
 
     <p class="instruction">
-        Click the letters in the correct order
+        Enter your name and click the letters in the correct order
     </p>
+
+    <!-- Player Name -->
+
+    <input
+        type="text"
+        id="playerName"
+        placeholder="Enter your name"
+        maxlength="30"
+        autocomplete="off"
+    >
+
+    <!-- Target -->
 
     <div class="target">
         Target: Z → O → H → O
     </div>
 
+    <!-- Score -->
+
     <div class="score">
-        Score: <span id="score">0</span>
+        Score:
+        <span id="score">0</span>
     </div>
+
+    <!-- Game Grid -->
 
     <div class="grid" id="grid">
 
@@ -173,11 +264,17 @@
 
     </div>
 
+    <!-- Game Message -->
+
     <div id="message"></div>
+
+    <!-- Backend Status -->
 
     <div class="backend" id="backendStatus">
         Backend: Waiting
     </div>
+
+    <!-- Restart -->
 
     <button onclick="restartGame()">
         Restart Game
@@ -188,18 +285,29 @@
 
 <script>
 
-    // ==========================================
-    // CATALYST JAVA BACKEND
-    // ==========================================
+    /*
+     * Deployed Catalyst Java Function
+     */
 
-   const API_URL =
-    "https://demo-60084120945.development.catalystserverless.in/server/helloWorld/execute";
+    const API_URL =
+        "https://demo-60084120945.development.catalystserverless.in/server/helloWorld/execute";
 
-    // ==========================================
-    // GAME VARIABLES
-    // ==========================================
 
-    const targetSequence = ["Z", "O", "H", "O"];
+    /*
+     * Target sequence
+     */
+
+    const targetSequence = [
+        "Z",
+        "O",
+        "H",
+        "O"
+    ];
+
+
+    /*
+     * Game variables
+     */
 
     let currentStep = 0;
 
@@ -208,7 +316,12 @@
     let gameFinished = false;
 
 
-    const cells = document.querySelectorAll(".cell");
+    /*
+     * DOM elements
+     */
+
+    const cells =
+        document.querySelectorAll(".cell");
 
     const scoreDisplay =
         document.getElementById("score");
@@ -219,24 +332,49 @@
     const backendStatus =
         document.getElementById("backendStatus");
 
+    const playerNameInput =
+        document.getElementById("playerName");
 
-    // ==========================================
-    // CELL CLICK
-    // ==========================================
+
+    /*
+     * Handle cell clicks
+     */
 
     cells.forEach(cell => {
 
         cell.addEventListener("click", function () {
 
+            /*
+             * Don't allow clicks after game completion
+             */
+
             if (gameFinished) {
                 return;
             }
 
-            const letter = cell.textContent;
+
+            /*
+             * Don't allow clicking an already
+             * correctly selected cell
+             */
+
+            if (cell.classList.contains("correct")) {
+                return;
+            }
 
 
-            // Correct answer
-            if (letter === targetSequence[currentStep]) {
+            const letter =
+                cell.textContent;
+
+
+            /*
+             * Correct letter
+             */
+
+            if (
+                letter ===
+                targetSequence[currentStep]
+            ) {
 
                 cell.classList.add("correct");
 
@@ -244,48 +382,81 @@
 
                 score += 10;
 
-                scoreDisplay.textContent = score;
+                scoreDisplay.textContent =
+                    score;
 
 
-                // Player completed puzzle
-                if (currentStep === targetSequence.length) {
+                /*
+                 * Check game completion
+                 */
+
+                if (
+                    currentStep ===
+                    targetSequence.length
+                ) {
 
                     gameFinished = true;
 
                     message.textContent =
                         "🎉 You Win!";
 
-                    message.className = "success";
+                    message.className =
+                        "success";
 
 
-                    // SEND SCORE TO JAVA
+                    /*
+                     * Send player name + score
+                     * to Java backend
+                     */
+
                     sendScore(score);
                 }
 
             }
 
-            // Wrong answer
+
+            /*
+             * Wrong letter
+             */
+
             else {
 
                 cell.classList.add("wrong");
 
                 score -= 2;
 
+
+                /*
+                 * Score cannot go below zero
+                 */
+
                 if (score < 0) {
                     score = 0;
                 }
 
-                scoreDisplay.textContent = score;
+
+                scoreDisplay.textContent =
+                    score;
+
 
                 message.textContent =
                     "❌ Wrong letter! Try again.";
 
-                message.className = "error";
+                message.className =
+                    "error";
 
+
+                /*
+                 * Remove red color
+                 * after 500 milliseconds
+                 */
 
                 setTimeout(() => {
+
                     cell.classList.remove("wrong");
+
                 }, 500);
+
             }
 
         });
@@ -293,11 +464,35 @@
     });
 
 
-    // ==========================================
-    // SEND SCORE TO JAVA BACKEND
-    // ==========================================
+    /*
+     * Send score to Java backend
+     */
 
     async function sendScore(score) {
+
+        /*
+         * Get player name
+         */
+
+        let playerName =
+            playerNameInput.value.trim();
+
+
+        /*
+         * If name is empty,
+         * use Guest
+         */
+
+        if (playerName === "") {
+
+            playerName = "Guest";
+
+        }
+
+
+        /*
+         * Show sending status
+         */
 
         backendStatus.textContent =
             "Backend: Sending score...";
@@ -305,28 +500,59 @@
 
         try {
 
+            /*
+             * Build API URL
+             *
+             * Example:
+             *
+             * ?name=Mugesh&score=40
+             */
+
             const url =
-                API_URL +
-                "?score=" +
-                encodeURIComponent(score);
+                API_URL
+                + "?name="
+                + encodeURIComponent(playerName)
+                + "&score="
+                + encodeURIComponent(score);
 
 
-            const response = await fetch(url, {
-                method: "POST"
-            });
+            /*
+             * Send POST request
+             */
 
+            const response =
+                await fetch(
+                    url,
+                    {
+                        method: "POST"
+                    }
+                );
+
+
+            /*
+             * Check HTTP response
+             */
 
             if (!response.ok) {
 
                 throw new Error(
                     "HTTP " + response.status
                 );
+
             }
 
+
+            /*
+             * Read backend response
+             */
 
             const data =
                 await response.json();
 
+
+            /*
+             * Show response in browser console
+             */
 
             console.log(
                 "Java Backend Response:",
@@ -334,8 +560,13 @@
             );
 
 
+            /*
+             * Backend successfully received
+             * the score
+             */
+
             backendStatus.textContent =
-                "Backend: Score saved ✓";
+                "Backend: Score received ✓";
 
 
         } catch (error) {
@@ -354,9 +585,9 @@
     }
 
 
-    // ==========================================
-    // RESTART GAME
-    // ==========================================
+    /*
+     * Restart Game
+     */
 
     function restartGame() {
 
@@ -367,17 +598,39 @@
         gameFinished = false;
 
 
-        scoreDisplay.textContent = "0";
+        /*
+         * Reset score
+         */
+
+        scoreDisplay.textContent =
+            "0";
+
+
+        /*
+         * Reset messages
+         */
 
         message.textContent = "";
+
+        message.className = "";
+
+
+        /*
+         * Reset backend status
+         */
 
         backendStatus.textContent =
             "Backend: Waiting";
 
 
+        /*
+         * Remove cell states
+         */
+
         cells.forEach(cell => {
 
             cell.classList.remove("correct");
+
             cell.classList.remove("wrong");
 
         });
@@ -387,4 +640,5 @@
 </script>
 
 </body>
+
 </html>
